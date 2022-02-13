@@ -140,8 +140,12 @@ enum ec_sensors {
 #define SENSOR_TEMP_WATER_IN BIT(ec_sensor_temp_water_in)
 #define SENSOR_TEMP_WATER_OUT BIT(ec_sensor_temp_water_out)
 
+enum board_family {
+	family_amd_500_series,
+};
+
 /* All the known sensors for ASUS EC controllers */
-static const struct ec_sensor_info known_ec_sensors[] = {
+static const struct ec_sensor_info sensors_family_amd_500[] = {
 	[ec_sensor_temp_chipset] =
 		EC_SENSOR("Chipset", hwmon_temp, 1, 0x00, 0x3a),
 	[ec_sensor_temp_cpu] = EC_SENSOR("CPU", hwmon_temp, 1, 0x00, 0x3b),
@@ -172,12 +176,14 @@ static const struct ec_sensor_info known_ec_sensors[] = {
 #define SENSOR_SET_TEMP_WATER (SENSOR_TEMP_WATER_IN | SENSOR_TEMP_WATER_OUT)
 
 struct ec_board_info {
+	enum board_family family;
 	unsigned long sensors;
 	const char *mutex_path;
 };
 
 /* PRIME X570-PRO */
 static const struct ec_board_info __initconst board_prime_x570_pro = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_VRM |
 		SENSOR_TEMP_T_SENSOR | SENSOR_FAN_CHIPSET,
 	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
@@ -185,6 +191,7 @@ static const struct ec_board_info __initconst board_prime_x570_pro = {
 
 /* Pro WS X570-ACE */
 static const struct ec_board_info __initconst board_pro_ws_x570_ace = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_VRM |
 		SENSOR_FAN_CHIPSET | SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
 	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
@@ -192,6 +199,7 @@ static const struct ec_board_info __initconst board_pro_ws_x570_ace = {
 
 /* ROG CROSSHAIR VIII DARK HERO */
 static const struct ec_board_info __initconst board_r_c8dh = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
 		SENSOR_FAN_CPU_OPT | SENSOR_FAN_WATER_FLOW |
@@ -201,6 +209,7 @@ static const struct ec_board_info __initconst board_r_c8dh = {
 
 /* ROG CROSSHAIR VIII FORMULA */
 static const struct ec_board_info __initconst board_r_c8f = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_FAN_CPU_OPT | SENSOR_FAN_CHIPSET |
 		SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
@@ -209,6 +218,7 @@ static const struct ec_board_info __initconst board_r_c8f = {
 
 /* ROG CROSSHAIR VIII HERO */
 static const struct ec_board_info __initconst board_r_c8h = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
 		SENSOR_FAN_CPU_OPT | SENSOR_FAN_CHIPSET |
@@ -218,6 +228,7 @@ static const struct ec_board_info __initconst board_r_c8h = {
 
 /* ROG CROSSHAIR VIII IMPACT */
 static const struct ec_board_info __initconst board_r_c8i = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_FAN_CHIPSET |
 		SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
@@ -226,6 +237,7 @@ static const struct ec_board_info __initconst board_r_c8i = {
 
 /* ROG STRIX B550-E GAMING */
 static const struct ec_board_info __initconst board_rs_b550_e_gaming = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
 		SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_FAN_CPU_OPT,
@@ -234,6 +246,7 @@ static const struct ec_board_info __initconst board_rs_b550_e_gaming = {
 
 /* ROG STRIX B550-I GAMING */
 static const struct ec_board_info __initconst board_rs_b550_i_gaming = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
 		SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_FAN_VRM_HS |
@@ -243,6 +256,7 @@ static const struct ec_board_info __initconst board_rs_b550_i_gaming = {
 
 /* ROG STRIX X570-E GAMING */
 static const struct ec_board_info __initconst board_rs_x570_e_gaming = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
 		SENSOR_TEMP_T_SENSOR |
 		SENSOR_TEMP_VRM | SENSOR_FAN_CHIPSET |
@@ -252,6 +266,7 @@ static const struct ec_board_info __initconst board_rs_x570_e_gaming = {
 
 /* ROG STRIX X570-F GAMING */
 static const struct ec_board_info __initconst board_rs_x570_f_gaming = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
 		SENSOR_TEMP_T_SENSOR | SENSOR_FAN_CHIPSET,
 	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
@@ -259,6 +274,7 @@ static const struct ec_board_info __initconst board_rs_x570_f_gaming = {
 
 /* ROG STRIX X570-I GAMING */
 static const struct ec_board_info __initconst board_rs_x570_i_gaming = {
+	.family = family_amd_500_series,
 	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_FAN_VRM_HS |
 		SENSOR_FAN_CHIPSET | SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
 	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
@@ -358,6 +374,7 @@ static int unlock_mutex(struct lock_data *data)
 
 struct ec_sensors_data {
 	struct ec_board_info board_info;
+	const struct ec_sensor_info *sensors_info;
 	struct ec_sensor *sensors;
 	/* EC registers to read from */
 	u16 *registers;
@@ -400,7 +417,7 @@ static bool is_sensor_data_signed(const struct ec_sensor_info *si)
 static const struct ec_sensor_info *
 get_sensor_info(const struct ec_sensors_data *state, int index)
 {
-	return &known_ec_sensors[state->sensors[index].info_index];
+	return state->sensors_info + state->sensors[index].info_index;
 }
 
 static int sensor_count(const struct ec_board_info *board)
@@ -443,9 +460,9 @@ static void __init setup_sensor_data(struct ec_sensors_data *ec)
 		s->info_index = i;
 		s->cached_value = 0;
 		ec->nr_registers +=
-			known_ec_sensors[s->info_index].addr.components.size;
+			ec->sensors_info[s->info_index].addr.components.size;
 		bank_found = false;
-		bank = known_ec_sensors[s->info_index].addr.components.bank;
+		bank = ec->sensors_info[s->info_index].addr.components.bank;
 		for (j = 0; j < ec->nr_banks; j++) {
 			if (ec->banks[j] == bank) {
 				bank_found = true;
@@ -598,8 +615,9 @@ static void update_sensor_values(struct ec_sensors_data *ec, u8 *data)
 	struct ec_sensor *s, *sensor_end;
 
 	sensor_end = ec->sensors + sensor_count(&ec->board_info);
+
 	for (s = ec->sensors; s != sensor_end; s++) {
-		si = &known_ec_sensors[s->info_index];
+		si = ec->sensors_info + s->info_index;
 		s->cached_value = get_sensor_value(si, data);
 		data += si->addr.components.size;
 	}
@@ -763,6 +781,17 @@ static int __init configure_sensor_setup(struct device *dev)
 	if (!pboard_info) {
 		return -ENODEV;
 	}
+
+	switch (ec_data->board_info.family) {
+		case family_amd_500_series:
+			ec_data->sensors_info = sensors_family_amd_500;
+			break;
+		default:
+			dev_err(dev, "Unknown board family: %d",
+				ec_data->board_info.family);
+			return -EINVAL;
+	}
+
 	ec_data->board_info = *pboard_info;
 	status = setup_lock_data(dev);
 	if (status) {
