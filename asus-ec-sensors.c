@@ -141,10 +141,40 @@ enum ec_sensors {
 #define SENSOR_TEMP_WATER_OUT BIT(ec_sensor_temp_water_out)
 
 enum board_family {
+	family_amd_400_series,
 	family_amd_500_series,
 };
 
 /* All the known sensors for ASUS EC controllers */
+static const struct ec_sensor_info sensors_family_amd_400[] = {
+	[ec_sensor_temp_chipset] =
+		EC_SENSOR("Chipset", hwmon_temp, 1, 0x00, 0x3a),
+	[ec_sensor_temp_cpu] =
+		EC_SENSOR("CPU", hwmon_temp, 1, 0x00, 0x3b),
+	[ec_sensor_temp_mb] =
+		EC_SENSOR("Motherboard", hwmon_temp, 1, 0x00, 0x3c),
+	[ec_sensor_temp_t_sensor] =
+		EC_SENSOR("T_Sensor", hwmon_temp, 1, 0x00, 0x3d),
+	[ec_sensor_temp_vrm] =
+		EC_SENSOR("VRM", hwmon_temp, 1, 0x00, 0x3e),
+	[ec_sensor_in_cpu_core] =
+		EC_SENSOR("CPU Core", hwmon_in, 2, 0x00, 0xa2),
+	[ec_sensor_fan_cpu_opt] =
+		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xbc),
+	[ec_sensor_fan_vrm_hs] =
+		EC_SENSOR("VRM HS", hwmon_fan, 2, 0x00, 0xb2),
+	[ec_sensor_fan_chipset] =
+		EC_SENSOR("Chipset", hwmon_fan, 2, 0x00, 0x00), // Unknown
+	[ec_sensor_fan_water_flow] =
+		EC_SENSOR("Water_Flow", hwmon_fan, 2, 0x00, 0xb4),
+	[ec_sensor_curr_cpu] =
+		EC_SENSOR("CPU", hwmon_curr, 1, 0x00, 0xf4),
+	[ec_sensor_temp_water_in] =
+		EC_SENSOR("Water_In", hwmon_temp, 1, 0x01, 0x0d),
+	[ec_sensor_temp_water_out] =
+		EC_SENSOR("Water_Out", hwmon_temp, 1, 0x01, 0x0b),
+};
+
 static const struct ec_sensor_info sensors_family_amd_500[] = {
 	[ec_sensor_temp_chipset] =
 		EC_SENSOR("Chipset", hwmon_temp, 1, 0x00, 0x3a),
@@ -179,6 +209,15 @@ struct ec_board_info {
 	enum board_family family;
 	unsigned long sensors;
 	const char *mutex_path;
+};
+
+/* PRIME X470-PRO */
+static const struct ec_board_info __initconst board_prime_x470_pro = {
+	.family = family_amd_400_series,
+	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
+		SENSOR_TEMP_VRM | SENSOR_FAN_CPU_OPT |
+		SENSOR_CURR_CPU | SENSOR_IN_CPU_CORE,
+	.mutex_path = ACPI_GLOBAL_LOCK_PSEUDO_PATH,
 };
 
 /* PRIME X570-PRO */
@@ -289,6 +328,8 @@ static const struct ec_board_info __initconst board_rs_x570_i_gaming = {
 }
 
 static const struct dmi_system_id asus_ec_dmi_table[] __initconst = {
+	DMI_EXACT_MATCH_BOARD(VENDOR_ASUS_UPPER_CASE,
+		"PRIME X470-PRO", &board_prime_x470_pro),
 	DMI_EXACT_MATCH_BOARD(VENDOR_ASUS_UPPER_CASE,
 		"PRIME X570-PRO", &board_prime_x570_pro),
 	DMI_EXACT_MATCH_BOARD(VENDOR_ASUS_UPPER_CASE,
@@ -781,8 +822,10 @@ static int __init configure_sensor_setup(struct device *dev)
 	if (!pboard_info) {
 		return -ENODEV;
 	}
-
 	switch (ec_data->board_info.family) {
+		case family_amd_400_series:
+			ec_data->sensors_info = sensors_family_amd_400;
+			break;
 		case family_amd_500_series:
 			ec_data->sensors_info = sensors_family_amd_500;
 			break;
